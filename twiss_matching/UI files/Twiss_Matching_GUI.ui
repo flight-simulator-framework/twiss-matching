@@ -1,0 +1,1456 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1613</width>
+    <height>1053</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Twiss Matching GUI</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true">QGroupBox {
+    background-color: rgb(245, 245, 245);
+    border: 1px solid rgb(210, 210, 210);
+    border-radius: 6px;
+    margin-top: 8px;
+    padding-top: 6px;
+}
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 0 4px 0 4px;
+}
+QToolButton {
+    border: 1px solid #888;
+    border-radius: 11px;
+    min-width: 22px;
+    max-width: 22px;
+    min-height: 22px;
+    max-height: 22px;
+    padding: 0px;
+    font-weight: bold;
+}
+QToolButton:hover {
+    background-color: #e6e6e6;
+}</string>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QGroupBox" name="leftGroup">
+      <property name="title">
+       <string/>
+      </property>
+      <layout class="QVBoxLayout" name="leftVBox">
+       <item>
+        <widget class="QGroupBox" name="devicesGroup">
+         <property name="title">
+          <string>Devices with position along the lattice</string>
+         </property>
+         <layout class="QVBoxLayout" name="devicesVBox">
+          <item>
+           <layout class="QHBoxLayout" name="modelButtonsHBox">
+            <item>
+             <widget class="QPushButton" name="show_beamline_button">
+              <property name="text">
+               <string>Show beamline</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="download_quads_button">
+              <property name="text">
+               <string>Download quadrupoles status</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="load_machine_status_button">
+              <property name="text">
+               <string>Load quadrupoles status...</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="model_sync_tooltip">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Matching is computed on the RF-Track model, so the model must have the same optics as the machine.&lt;/p&gt;&lt;p&gt;Download the quadrupole currents from the machine and load them into the model before computing the matching. Quadrupoles that are not used for matching keep these currents.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>?</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="devicesHBox">
+            <item>
+             <widget class="QGroupBox" name="quadrupolesGroup">
+              <property name="title">
+               <string>Matching quadrupoles</string>
+              </property>
+              <layout class="QVBoxLayout" name="quadrupolesVBox">
+               <item>
+                <widget class="QListWidget" name="quadrupoles_list">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Quadrupoles varied by the solver (the knobs).&lt;/p&gt;&lt;p&gt;Only quadrupoles between the reference point of the incoming beam and the target location can change the beam at the target.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="selectionMode">
+                  <enum>QAbstractItemView::ExtendedSelection</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="targetLocationGroup">
+              <property name="title">
+               <string>Target location</string>
+              </property>
+              <layout class="QVBoxLayout" name="targetLocationVBox">
+               <item>
+                <widget class="QListWidget" name="target_list">
+                 <property name="toolTip">
+                  <string>Element where the requested beam has to be reached, e.g. a screen or an experiment station.</string>
+                 </property>
+                 <property name="selectionMode">
+                  <enum>QAbstractItemView::SingleSelection</enum>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="incomingBeamGroup">
+         <property name="title">
+          <string>Incoming beam</string>
+         </property>
+         <layout class="QGridLayout" name="gridIncomingBeam">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_incoming_source">
+            <property name="text">
+             <string>Source</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" colspan="2">
+           <widget class="QComboBox" name="incoming_source_combo">
+            <item>
+             <property name="text">
+              <string>Emittance Measurement session</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Model (design optics)</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Manual</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QToolButton" name="incoming_tooltip">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Emittance and Twiss parameters of the beam at the reference point.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Emittance Measurement session&lt;/b&gt;: the fit result of a quadrupole scan. The reference point is the entrance of the scanned quadrupole.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Model&lt;/b&gt;: design optics of the selected interface.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Manual&lt;/b&gt;: type the values in.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>?</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_em_session">
+            <property name="text">
+             <string>EM session</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" colspan="2">
+           <widget class="QLineEdit" name="em_session_directory">
+            <property name="placeholderText">
+             <string>Emittance Measurement session directory</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QPushButton" name="load_em_session_button">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_reference_point">
+            <property name="text">
+             <string>Reference point</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1" colspan="3">
+           <widget class="QLabel" name="reference_point_label">
+            <property name="text">
+             <string>-</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" colspan="4">
+           <layout class="QHBoxLayout" name="incomingPlanesHBox">
+            <item>
+             <widget class="QGroupBox" name="incoming_x_group">
+              <property name="title">
+               <string>Horizontal</string>
+              </property>
+              <layout class="QFormLayout" name="incomingXForm">
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_emit_x_in">
+                 <property name="text">
+                  <string>ε (norm.) [mm·mrad]</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QDoubleSpinBox" name="emit_x_in">
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="maximum">
+                  <double>1000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>1.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_beta_x_in">
+                 <property name="text">
+                  <string>β [m]</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QDoubleSpinBox" name="beta_x_in">
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>0.001000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>10.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_alpha_x_in">
+                 <property name="text">
+                  <string>α</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QDoubleSpinBox" name="alpha_x_in">
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-1000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>1000.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="incoming_y_group">
+              <property name="title">
+               <string>Vertical</string>
+              </property>
+              <layout class="QFormLayout" name="incomingYForm">
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_emit_y_in">
+                 <property name="text">
+                  <string>ε (norm.) [mm·mrad]</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QDoubleSpinBox" name="emit_y_in">
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="maximum">
+                  <double>1000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>1.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_beta_y_in">
+                 <property name="text">
+                  <string>β [m]</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QDoubleSpinBox" name="beta_y_in">
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>0.001000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>10.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_alpha_y_in">
+                 <property name="text">
+                  <string>α</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QDoubleSpinBox" name="alpha_y_in">
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-1000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>1000.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="4" column="0">
+           <widget class="QLabel" name="label_momentum_in">
+            <property name="text">
+             <string>Momentum [MeV/c]</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1" colspan="2">
+           <widget class="QDoubleSpinBox" name="momentum_in">
+            <property name="decimals">
+             <number>2</number>
+            </property>
+            <property name="maximum">
+             <double>100000.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="targetGroup">
+         <property name="title">
+          <string>Target beam at the target location</string>
+         </property>
+         <layout class="QVBoxLayout" name="targetVBox">
+          <item>
+           <layout class="QHBoxLayout" name="targetPlanesHBox">
+            <item>
+             <widget class="QGroupBox" name="target_x_group">
+              <property name="title">
+               <string>Horizontal</string>
+              </property>
+              <layout class="QGridLayout" name="targetXGrid">
+               <item row="0" column="0">
+                <widget class="QCheckBox" name="use_beta_x_target">
+                 <property name="text">
+                  <string>β [m]</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QDoubleSpinBox" name="beta_x_target">
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>0.001000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>10.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QCheckBox" name="use_alpha_x_target">
+                 <property name="text">
+                  <string>α</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QDoubleSpinBox" name="alpha_x_target">
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-1000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>1000.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QCheckBox" name="use_sigma_x_target">
+                 <property name="text">
+                  <string>σ [mm]</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QDoubleSpinBox" name="sigma_x_target">
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="maximum">
+                  <double>100.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>1.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="target_y_group">
+              <property name="title">
+               <string>Vertical</string>
+              </property>
+              <layout class="QGridLayout" name="targetYGrid">
+               <item row="0" column="0">
+                <widget class="QCheckBox" name="use_beta_y_target">
+                 <property name="text">
+                  <string>β [m]</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QDoubleSpinBox" name="beta_y_target">
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>0.001000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>10000.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>10.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QCheckBox" name="use_alpha_y_target">
+                 <property name="text">
+                  <string>α</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QDoubleSpinBox" name="alpha_y_target">
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-1000.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>1000.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QCheckBox" name="use_sigma_y_target">
+                 <property name="text">
+                  <string>σ [mm]</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QDoubleSpinBox" name="sigma_y_target">
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="maximum">
+                  <double>100.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>1.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="targetPresetsHBox">
+            <item>
+             <widget class="QPushButton" name="waist_button">
+              <property name="toolTip">
+               <string>Sets α = 0 in both planes, i.e. the beam has its smallest size (a waist) at the target location.</string>
+              </property>
+              <property name="text">
+               <string>Waist (α = 0)</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="round_beam_button">
+              <property name="toolTip">
+               <string>Sets the vertical target so that σy = σx with the incoming emittances.</string>
+              </property>
+              <property name="text">
+               <string>Round beam (σx = σy)</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="design_twiss_button">
+              <property name="toolTip">
+               <string>Copies the design Twiss parameters of the model at the target location into the target fields.</string>
+              </property>
+              <property name="text">
+               <string>Design optics</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QGridLayout" name="targetConstraintsGrid">
+            <item row="0" column="0">
+             <widget class="QCheckBox" name="use_beta_max">
+              <property name="text">
+               <string>β max along the line [m]</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QDoubleSpinBox" name="beta_max">
+              <property name="decimals">
+               <number>1</number>
+              </property>
+              <property name="maximum">
+               <double>100000.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>200.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QToolButton" name="beta_max_tooltip">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Inequality constraint: β stays below this value everywhere between the reference point and the target location.&lt;/p&gt;&lt;p&gt;It keeps the beam away from the aperture and rejects solutions with very strong focusing.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>?</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_tolerance">
+              <property name="text">
+               <string>Tolerance (Bmag − 1)</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QDoubleSpinBox" name="tolerance">
+              <property name="decimals">
+               <number>3</number>
+              </property>
+              <property name="maximum">
+               <double>10.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>0.010000000000000</double>
+              </property>
+              <property name="value">
+               <double>0.010000000000000</double>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QToolButton" name="tolerance_tooltip">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bmag = ½ (β γ&lt;sub&gt;t&lt;/sub&gt; − 2 α α&lt;sub&gt;t&lt;/sub&gt; + γ β&lt;sub&gt;t&lt;/sub&gt;) compares the matched ellipse (β, α, γ) with the target ellipse (β&lt;sub&gt;t&lt;/sub&gt;, α&lt;sub&gt;t&lt;/sub&gt;, γ&lt;sub&gt;t&lt;/sub&gt;).&lt;/p&gt;&lt;p&gt;Bmag = 1 is a perfect match. The matching stops when Bmag − 1 is below this tolerance in both planes.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>?</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0" colspan="2">
+             <widget class="QLabel" name="dof_label">
+              <property name="text">
+               <string>Constraints: 0 · Matching quadrupoles: 0</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="2">
+             <widget class="QToolButton" name="dof_tooltip">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Every ticked target value is one constraint, every matching quadrupole is one knob.&lt;/p&gt;&lt;p&gt;For an exact solution you need at least as many knobs as constraints, e.g. 4 quadrupoles for βx, αx, βy, αy. With fewer knobs the solver returns the best compromise (weighted least squares).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="text">
+               <string>?</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="computingMethodGroup">
+         <property name="title">
+          <string>Matching engine</string>
+         </property>
+         <layout class="QGridLayout" name="gridComputingMethod">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_computing_method">
+            <property name="text">
+             <string>Computing method</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="computing_method_combo">
+            <item>
+             <property name="text">
+              <string>Linear R-matrix model</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>RF-Track tracking</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Online (measured beam sizes)</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QToolButton" name="computing_method_tooltip">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;Linear R-matrix model&lt;/b&gt;: transports the Twiss parameters with the transfer matrices of the model. Fast, used to find the starting solution.&lt;/p&gt;&lt;p&gt;&lt;b&gt;RF-Track tracking&lt;/b&gt;: tracks the incoming beam through the model, including energy spread and nonlinear effects. Starts from the linear solution.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Online&lt;/b&gt;: changes the quadrupoles on the machine and minimizes the difference between the measured and requested beam sizes on the target screen. Model independent, but slow and it needs beam time.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>?</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_restarts">
+            <property name="text">
+             <string>Random restarts</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QSpinBox" name="restarts">
+            <property name="maximum">
+             <number>1000</number>
+            </property>
+            <property name="value">
+             <number>20</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QToolButton" name="restarts_tooltip">
+            <property name="toolTip">
+             <string>Matching usually has several solutions. The solver starts from random quadrupole currents within the limits and keeps the solution with the smallest current change and the smallest β along the line.</string>
+            </property>
+            <property name="text">
+             <string>?</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_current_change_weight">
+            <property name="text">
+             <string>Current change penalty</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QDoubleSpinBox" name="current_change_weight">
+            <property name="decimals">
+             <number>4</number>
+            </property>
+            <property name="singleStep">
+             <double>0.001000000000000</double>
+            </property>
+            <property name="value">
+             <double>0.001000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QToolButton" name="current_change_weight_tooltip">
+            <property name="toolTip">
+             <string>Weight of the difference between the proposed and the present currents. Higher values prefer solutions close to the present machine settings.</string>
+            </property>
+            <property name="text">
+             <string>?</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="applyGroup">
+         <property name="title">
+          <string>Apply settings</string>
+         </property>
+         <layout class="QGridLayout" name="gridApply">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_ramp_steps">
+            <property name="text">
+             <string>Ramp steps</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QSpinBox" name="ramp_steps">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>100</number>
+            </property>
+            <property name="value">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2" rowspan="3">
+           <widget class="QToolButton" name="apply_tooltip">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Before applying, the present machine state is saved as the reference.&lt;/p&gt;&lt;p&gt;The currents are ramped from the present to the proposed values in the given number of steps. After every step the transmission is read from the last ICT; if it drops below the limit, the ramp stops and the reference is restored.&lt;/p&gt;&lt;p&gt;Measurements per step is the number of shots averaged on the screens during verification.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>?</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_min_transmission">
+            <property name="text">
+             <string>Min. transmission [%]</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="min_transmission">
+            <property name="decimals">
+             <number>0</number>
+            </property>
+            <property name="maximum">
+             <double>100.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>80.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_meas_per_step">
+            <property name="text">
+             <string>Measurements per step</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QSpinBox" name="meas_per_step">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="value">
+             <number>5</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="actionsGroup">
+         <property name="title">
+          <string>Databases</string>
+         </property>
+         <layout class="QGridLayout" name="gridActions">
+          <property name="spacing">
+           <number>12</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_session_directory">
+            <property name="text">
+             <string>Session directory</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="session_directory">
+            <property name="minimumSize">
+             <size>
+              <width>420</width>
+              <height>0</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QPushButton" name="load_session_button">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="text">
+             <string>...</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QProgressBar" name="progressBar">
+         <property name="value">
+          <number>0</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTabWidget" name="tabs">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>1</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="matchingTab">
+       <attribute name="title">
+        <string>Matching</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="matchingVBox">
+        <item>
+         <layout class="QHBoxLayout" name="plotSelectorsHBox">
+          <item>
+           <widget class="QLabel" name="label_plot_quantity">
+            <property name="text">
+             <string>Plot</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="plot_quantity_combo">
+            <item>
+             <property name="text">
+              <string>β functions</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Beam envelope σ</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>α functions</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="show_present_optics">
+            <property name="text">
+             <string>Show present optics</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="plotSelectorsSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="plotAndSolutionHBox">
+          <item>
+           <widget class="QWidget" name="plotPlaceholder" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>500</width>
+              <height>500</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="solution_group">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>520</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="title">
+             <string>Solution</string>
+            </property>
+            <layout class="QVBoxLayout" name="solutionVBox">
+             <property name="spacing">
+              <number>8</number>
+             </property>
+             <item>
+              <layout class="QGridLayout" name="solutionInfoGrid">
+               <property name="horizontalSpacing">
+                <number>12</number>
+               </property>
+               <item row="0" column="0">
+                <widget class="QLabel" name="label_result_reference_point">
+                 <property name="text">
+                  <string>Reference point</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QLabel" name="result_reference_point">
+                 <property name="text">
+                  <string>-</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="label_result_target_location">
+                 <property name="text">
+                  <string>Target location</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QLabel" name="result_target_location">
+                 <property name="text">
+                  <string>-</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_result_status">
+                 <property name="text">
+                  <string>Status</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QLabel" name="result_status">
+                 <property name="text">
+                  <string>Not computed</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QGroupBox" name="twiss_results_group">
+               <property name="title">
+                <string>Beam at the target location</string>
+               </property>
+               <layout class="QVBoxLayout" name="twissResultsVBox">
+                <item>
+                 <widget class="QTableWidget" name="twiss_table">
+                  <property name="editTriggers">
+                   <set>QAbstractItemView::NoEditTriggers</set>
+                  </property>
+                  <row>
+                   <property name="text">
+                    <string>βx [m]</string>
+                   </property>
+                  </row>
+                  <row>
+                   <property name="text">
+                    <string>αx</string>
+                   </property>
+                  </row>
+                  <row>
+                   <property name="text">
+                    <string>βy [m]</string>
+                   </property>
+                  </row>
+                  <row>
+                   <property name="text">
+                    <string>αy</string>
+                   </property>
+                  </row>
+                  <row>
+                   <property name="text">
+                    <string>σx [mm]</string>
+                   </property>
+                  </row>
+                  <row>
+                   <property name="text">
+                    <string>σy [mm]</string>
+                   </property>
+                  </row>
+                  <row>
+                   <property name="text">
+                    <string>Bmag x</string>
+                   </property>
+                  </row>
+                  <row>
+                   <property name="text">
+                    <string>Bmag y</string>
+                   </property>
+                  </row>
+                  <column>
+                   <property name="text">
+                    <string>Target</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Present</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Matched</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Measured</string>
+                   </property>
+                  </column>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QGroupBox" name="quads_results_group">
+               <property name="title">
+                <string>Quadrupole settings</string>
+               </property>
+               <layout class="QVBoxLayout" name="quadsResultsVBox">
+                <item>
+                 <widget class="QTableWidget" name="quads_table">
+                  <property name="toolTip">
+                   <string>Min and max are the current limits used by the solver; double-click to edit them.</string>
+                  </property>
+                  <attribute name="verticalHeaderVisible">
+                   <bool>false</bool>
+                  </attribute>
+                  <column>
+                   <property name="text">
+                    <string>Quadrupole</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Present [A]</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Min [A]</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Max [A]</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Proposed [A]</string>
+                   </property>
+                  </column>
+                  <column>
+                   <property name="text">
+                    <string>Δ [A]</string>
+                   </property>
+                  </column>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <layout class="QGridLayout" name="solutionButtonsGrid">
+               <item row="0" column="0">
+                <widget class="QPushButton" name="log_console_button">
+                 <property name="text">
+                  <string>Log Console</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QPushButton" name="phase_space_button">
+                 <property name="text">
+                  <string>Show phase space at the target</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QPushButton" name="save_reference_button">
+                 <property name="text">
+                  <string>Save reference state</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QPushButton" name="load_reference_button">
+                 <property name="text">
+                  <string>Load reference state...</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QLabel" name="logo_label">
+               <property name="minimumSize">
+                <size>
+                 <width>120</width>
+                 <height>60</height>
+                </size>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignCenter</set>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="computeHBox">
+          <item>
+           <widget class="QToolButton" name="compute_tooltip">
+            <property name="toolTip">
+             <string>Runs the selected matching engine. The proposed currents are only computed and displayed, nothing is sent to the machine.</string>
+            </property>
+            <property name="text">
+             <string>?</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="compute_button">
+            <property name="styleSheet">
+             <string notr="true">background-color: red; color: white;</string>
+            </property>
+            <property name="text">
+             <string>COMPUTE MATCHING</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="stop_button">
+            <property name="styleSheet">
+             <string notr="true">background-color: green; color: white;</string>
+            </property>
+            <property name="text">
+             <string>STOP MATCHING</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="applyHBox">
+          <item>
+           <widget class="QToolButton" name="apply_buttons_tooltip">
+            <property name="toolTip">
+             <string>APPLY TO MACHINE saves the reference state and ramps the matching quadrupoles to the proposed currents. RESTORE REFERENCE sets the saved currents back.</string>
+            </property>
+            <property name="text">
+             <string>?</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="apply_button">
+            <property name="styleSheet">
+             <string notr="true">background-color: red; color: white;</string>
+            </property>
+            <property name="text">
+             <string>APPLY TO MACHINE</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="restore_reference_button">
+            <property name="styleSheet">
+             <string notr="true">background-color: green; color: white;</string>
+            </property>
+            <property name="text">
+             <string>RESTORE REFERENCE</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="verifyHBox">
+          <item>
+           <widget class="QToolButton" name="verify_tooltip">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;b&gt;VERIFY ON SCREENS&lt;/b&gt;: measures the beam sizes on the screens between the reference point and the target and compares them with the prediction (Verification tab).&lt;/p&gt;&lt;p&gt;&lt;b&gt;MEASURE TWISS&lt;/b&gt;: runs a quadrupole scan with the Emittance Measurement engine to measure the Twiss parameters at the target location.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>?</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="verify_button">
+            <property name="text">
+             <string>VERIFY ON SCREENS</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="measure_twiss_button">
+            <property name="text">
+             <string>MEASURE TWISS (QUADRUPOLE SCAN)</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="verificationTab">
+       <attribute name="title">
+        <string>Verification</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verificationVBox">
+        <item>
+         <layout class="QHBoxLayout" name="verificationHBox">
+          <item>
+           <widget class="QWidget" name="verifyPlotPlaceholder" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>500</width>
+              <height>500</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="iterations_group">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>520</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="title">
+             <string>Iterations</string>
+            </property>
+            <layout class="QVBoxLayout" name="iterationsVBox">
+             <item>
+              <widget class="QTableWidget" name="iterations_table">
+               <property name="editTriggers">
+                <set>QAbstractItemView::NoEditTriggers</set>
+               </property>
+               <attribute name="verticalHeaderVisible">
+                <bool>false</bool>
+               </attribute>
+               <column>
+                <property name="text">
+                 <string>Iteration</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string>Bmag x</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string>Bmag y</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string>σx error [%]</string>
+                </property>
+               </column>
+               <column>
+                <property name="text">
+                 <string>σy error [%]</string>
+                </property>
+               </column>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="iterateHBox">
+          <item>
+           <widget class="QToolButton" name="iterate_tooltip">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Takes the last measurement as the new incoming beam and computes the next correction from the present machine state.&lt;/p&gt;&lt;p&gt;Usually 2–3 iterations are needed, because the model is not perfect (quadrupole calibration, beam energy).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>?</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="iterate_button">
+            <property name="styleSheet">
+             <string notr="true">background-color: red; color: white;</string>
+            </property>
+            <property name="text">
+             <string>USE MEASURED BEAM AND COMPUTE NEXT ITERATION</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
