@@ -117,7 +117,7 @@ QToolButton:hover {
               </property>
               <layout class="QVBoxLayout" name="targetLocationVBox">
                <item>
-                <widget class="QListWidget" name="target_list">
+                <widget class="QListWidget" name="screens_list">
                  <property name="toolTip">
                   <string>Element where the requested beam has to be reached, e.g. a screen or an experiment station.</string>
                  </property>

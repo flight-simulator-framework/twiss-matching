@@ -56,9 +56,9 @@ class MainWindow(QMainWindow, DeviceLists):
         self.s_positions = self._get_s_positions()
         quadrupoles = interface.get_quadrupoles()
         self.present_currents = dict(zip(quadrupoles["names"], quadrupoles["bdes"]))
-        self.target_list.setCurrentRow(self.target_list.count() - 1)
+        self.screens_list.setCurrentRow(self.screens_list.count() - 1)
         self.log_console_button.clicked.connect(self._show_console_log)
-        for signal in (self.quadrupoles_list.itemSelectionChanged, self.target_list.itemSelectionChanged,
+        for signal in (self.quadrupoles_list.itemSelectionChanged, self.screens_list.itemSelectionChanged,
                        self.plot_quantity_combo.currentIndexChanged,
                        *(getattr(self, f"use_{t}_target").toggled for t in TARGETS),
                        *(getattr(self, f"{t}_target").valueChanged for t in TARGETS)):
@@ -69,11 +69,11 @@ class MainWindow(QMainWindow, DeviceLists):
         self.beamline_view = None
         self.show_beamline_button.clicked.connect(self._show_beamline)
         self.quadrupoles_list.setItemDelegate(SPositionDelegate(self.quadrupoles_list))
-        self.target_list.setItemDelegate(SPositionDelegate(self.target_list))
+        self.screens_list.setItemDelegate(SPositionDelegate(self.screens_list))
         quadrupoles = list(getattr(self.interface, "quadrupoles", []))
         screens_sorted = self._sorted_by_s(getattr(self.interface, "screens", []))
         self._show_s_values_and_device_lists(self.quadrupoles_list, quadrupoles)
-        self._show_s_values_and_device_lists(self.target_list, screens_sorted)
+        self._show_s_values_and_device_lists(self.screens_list, screens_sorted)
         self.download_quads_button.clicked.connect(self._download_all_quads_status)
         self.load_machine_status_button.clicked.connect(self._load_model_quadrupoles_status)
 
@@ -267,7 +267,7 @@ class MainWindow(QMainWindow, DeviceLists):
 
     def _refresh(self):
         quads = self._selected(self.quadrupoles_list)
-        target = (self._selected(self.target_list) or ["-"])[0]
+        target = (self._selected(self.screens_list) or ["-"])[0]
         used = [getattr(self, f"use_{t}_target").isChecked() for t in TARGETS]
         self.dof_label.setText(f"Constraints: {sum(used)} · Matching quadrupoles: {len(quads)}"
                                + (" → best compromise only" if len(quads) < sum(used) else ""))
